@@ -1,6 +1,13 @@
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Scanner;
+import java.util.Random;
 
 public class Main {
     private static final String PATH_TO_FILE = "src/main/resources/words.txt";
