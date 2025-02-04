@@ -4,47 +4,50 @@ import java.util.*;
 
 public class Main {
     private static final String PATH_TO_FILE = "src/main/resources/words.txt";
+
     public static void main(String[] args) {
         System.out.println("Игра началась");
         List<String> list = new ArrayList<>();
         Set<Character> set = new HashSet<>();
-        Set<String> alreadyEnterWords = new HashSet<>();
+        Set<Character> alreadyEnterWords = new HashSet<>();
         Guillotine guillotine = new Guillotine();
+
         Scanner scan = new Scanner(System.in);
         File file = new File(PATH_TO_FILE);
         String word = getWordsFromFile(list, file);
-        addCharOfWordToSet(set,word);
+        addCharOfWordToSet(set, word);
         int life = 7;
-        while (life > 0){
-            if(set.isEmpty()){
-                System.out.println("Вы победили! Хотите сыграть еще раз? press [Y] - если хотите");
+        while (true) {
+            if (set.isEmpty() || life < 1) {
+                System.out.println("Хотите начать новую игру? press [Y] - если хотите");
                 String answer = scan.nextLine();
-                if(answer.equals("Y")){
+                if (answer.equals("Y")) {
                     life = 7;
-                    word = getWordsFromFile(list,file);
-                    addCharOfWordToSet(set,word);
+                    word = getWordsFromFile(list, file);
+                    addCharOfWordToSet(set, word);
                     continue;
                 }
                 break;
             }
-            revealHiddenLetter(word,set);
+            revealHiddenLetter(word, set);
             System.out.println("\nВведите букву: ");
             String c = scan.nextLine().toLowerCase().trim();
-            if(c.length() != 1 && !Character.isLetter(c.charAt(0))){
+            if (c.length() != 1 || !Character.isLetter(c.charAt(0)) || alreadyEnterWords.contains(c.charAt(0))) {
                 System.out.println("Вы вводите не букву или букву, которую уже вводили!");
                 continue;
             }
-            alreadyEnterWords.add(c);
-            if(set.contains(c)){
+            alreadyEnterWords.add(c.charAt(0));
+            if (set.contains(c.charAt(0))) {
                 System.out.println("Вы отгадали букву!");
-                set.remove(c);
-            }else {
-                selectGuillotine(life,guillotine);
+                set.remove(c.charAt(0));
+            } else {
+                selectGuillotine(life, guillotine);
                 life--;
             }
         }
     }
-    public static String getWordsFromFile(List<String> list, File file){
+
+    public static String getWordsFromFile(List<String> list, File file) {
         try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
             while (scanner.hasNextLine()) {
                 list.add(scanner.nextLine().trim().toLowerCase());
@@ -57,21 +60,24 @@ public class Main {
         Random random = new Random();
         return list.get(random.nextInt(list.size()));
     }
-    public static void addCharOfWordToSet(Set set, String word){
+
+    public static void addCharOfWordToSet(Set set, String word) {
         for (int i = 0; i < word.length(); i++) {
             set.add(word.charAt(i));
         }
     }
-    public static void revealHiddenLetter(String word, Set<Character> set){
+
+    public static void revealHiddenLetter(String word, Set<Character> set) {
         for (int i = 0; i < word.length(); i++) {
-            if(!set.contains(word.charAt(i))){
+            if (!set.contains(word.charAt(i))) {
                 System.out.print(word.charAt(i));
-            }else{
+            } else {
                 System.out.print("*");
             }
         }
     }
-    public static void selectGuillotine(int life,Guillotine guillotine){
+
+    public static void selectGuillotine(int life, Guillotine guillotine) {
         switch (life) {
             case 7:
                 guillotine.firstMissTake();
@@ -93,9 +99,6 @@ public class Main {
                 break;
             case 1:
                 guillotine.sevenMissTake();
-                break;
-            case 0:
-                System.out.println("Вы проиграли");
                 break;
         }
     }
