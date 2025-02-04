@@ -11,7 +11,6 @@ import java.util.Random;
 
 public class Main {
     private static final String PATH_TO_FILE = "src/main/resources/words.txt";
-
     public static void main(String[] args) {
         System.out.println("Игра началась");
         List<String> list = new ArrayList<>();
@@ -23,7 +22,7 @@ public class Main {
         File file = new File(PATH_TO_FILE);
         String word = getWordsFromFile(list, file);
         addCharOfWordToSet(set, word);
-        int life = 7;
+        int life = 0;
         while (true) {
             if (set.isEmpty() || life < 1) {
                 System.out.println("Хотите начать новую игру? press [Y] - если хотите");
@@ -36,6 +35,7 @@ public class Main {
                 }
                 break;
             }
+            System.out.println("Всего букв: " + word.length());
             revealHiddenLetter(word, set);
             System.out.println("\nВведите букву: ");
             String c = scan.nextLine().toLowerCase().trim();
