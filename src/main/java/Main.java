@@ -3,60 +3,51 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Main {
-    private static void start() {
-        int life = 0;
+    private static final String PATH_TO_FILE = "src/main/resources/words.txt";
+    public static void main(String[] args) {
+        System.out.println("Игра началась");
+        List<String> list = new ArrayList<>();
+        Set<Character> set = new HashSet<>();
+        Set<String> alreadyEnterWords = new HashSet<>();
         Guillotine guillotine = new Guillotine();
-        System.out.println("Начать игру или выйыти? [Y,N]");
-        Scanner scanner = new Scanner(System.in);
-        String answer = scanner.nextLine();
-        String word = getWord();
-        slideWord(word);
-        while (life <= 7) {
-            System.out.print("Введите букву: ");
-            String answerChar = scanner.nextLine();
-            if (!word.contains(answerChar)) {
-                System.out.println("Вы не отгдадили букву");
-                switch (life) {
-                    case 0:
-                        guillotine.firstMissTake();
-                        break;
-                    case 1:
-                        guillotine.secondMissTake();
-                        break;
-                    case 2:
-                        guillotine.threeMissTake();
-                        break;
-                    case 3:
-                        guillotine.forMissTake();
-                        break;
-                    case 4:
-                        guillotine.fiveMissTake();
-                        break;
-                    case 5:
-                        guillotine.sixMissTake();
-                        break;
-                    case 6:
-                        guillotine.sevenMissTake();
-                        break;
-                    case 7:
-                        System.out.println("Вы проиграли");
-                        break;
+        Scanner scan = new Scanner(System.in);
+        File file = new File(PATH_TO_FILE);
+        String word = getWordsFromFile(list, file);
+        addCharOfWordToSet(set,word);
+        int life = 7;
+        while (life > 0){
+            if(set.isEmpty()){
+                System.out.println("Вы победили! Хотите сыграть еще раз? press [Y] - если хотите");
+                String answer = scan.nextLine();
+                if(answer.equals("Y")){
+                    life = 7;
+                    word = getWordsFromFile(list,file);
+                    addCharOfWordToSet(set,word);
+                    continue;
                 }
-                life++;
+                break;
+            }
+            revealHiddenLetter(word,set);
+            System.out.println("\nВведите букву: ");
+            String c = scan.nextLine().toLowerCase().trim();
+            if(c.length() != 1 && !Character.isLetter(c.charAt(0))){
+                System.out.println("Вы вводите не букву или букву, которую уже вводили!");
                 continue;
             }
-            System.out.println("Вы отгадали букву: " + answerChar);
-
+            alreadyEnterWords.add(c);
+            if(set.contains(c)){
+                System.out.println("Вы отгадали букву!");
+                set.remove(c);
+            }else {
+                selectGuillotine(life,guillotine);
+                life--;
+            }
         }
-
     }
-
-    private static String getWord() {
-        File file = new File("src/main/resources/words.txt");
-        List<String> words = new ArrayList<>();
+    public static String getWordsFromFile(List<String> list, File file){
         try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
             while (scanner.hasNextLine()) {
-                words.add(scanner.nextLine().trim().toLowerCase());
+                list.add(scanner.nextLine().trim().toLowerCase());
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Ошибка при чтении файла: " + e.getMessage());
@@ -64,20 +55,48 @@ public class Main {
             throw new RuntimeException(e);
         }
         Random random = new Random();
-        String myWord = words.get(random.nextInt(words.size()));
-        return myWord;
+        return list.get(random.nextInt(list.size()));
     }
-
-    private static void slideWord(String word) {
-        int countSlide = word.length();
-        String[] slideWords = new String[countSlide];
-        for (int i = 0; i < countSlide; i++) {
-            slideWords[i] = "*";
+    public static void addCharOfWordToSet(Set set, String word){
+        for (int i = 0; i < word.length(); i++) {
+            set.add(word.charAt(i));
         }
-        Arrays.stream(slideWords).forEach(System.out::print);
     }
-
-    public static void main(String[] args) {
-        start();
+    public static void revealHiddenLetter(String word, Set<Character> set){
+        for (int i = 0; i < word.length(); i++) {
+            if(!set.contains(word.charAt(i))){
+                System.out.print(word.charAt(i));
+            }else{
+                System.out.print("*");
+            }
+        }
+    }
+    public static void selectGuillotine(int life,Guillotine guillotine){
+        switch (life) {
+            case 7:
+                guillotine.firstMissTake();
+                break;
+            case 6:
+                guillotine.secondMissTake();
+                break;
+            case 5:
+                guillotine.threeMissTake();
+                break;
+            case 4:
+                guillotine.forMissTake();
+                break;
+            case 3:
+                guillotine.fiveMissTake();
+                break;
+            case 2:
+                guillotine.sixMissTake();
+                break;
+            case 1:
+                guillotine.sevenMissTake();
+                break;
+            case 0:
+                System.out.println("Вы проиграли");
+                break;
+        }
     }
 }

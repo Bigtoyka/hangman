@@ -28,24 +28,25 @@ public class Guillotine {
         System.out.println("\n                _____" +
                 "\n               |     |" +
                 "\n               o     |" +
-                "\n               |     |" +
-                "\n              /      |" +
+                "\n              /|     |" +
+                "\n                     |" +
                 "\n                 _______\n");
+
     }
     public void fiveMissTake() {
         System.out.println("\n                _____" +
                 "\n               |     |" +
                 "\n               o     |" +
-                "\n               |     |" +
-                "\n              / \\    |" +
+                "\n              /|\\    |" +
+                "\n                     |" +
                 "\n                 _______\n");
     }
     public void sixMissTake() {
         System.out.println("\n                _____" +
                 "\n               |     |" +
                 "\n               o     |" +
-                "\n              /|     |" +
-                "\n              / \\    |" +
+                "\n              /|\\    |" +
+                "\n              /      |" +
                 "\n                 _______\n");
     }
     public void sevenMissTake() {
